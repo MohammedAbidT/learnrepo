@@ -1,0 +1,15 @@
+---
+- hosts: all
+  become: true
+
+  tasks:
+
+  - name: grep for username
+    shell: grep ' mydockerhub-user' /home/ubuntu/production/prod-config.yml
+    register: result
+    changed_when: result.rc != 0
+    failed_when: False
+  
+  - name: revert config if changed
+    shell: cp /home/ubuntu/configurations/config.yml /home/ubuntu/production/prod-config.yml
+    when: result.rc != '0'
